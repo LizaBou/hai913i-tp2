@@ -3,12 +3,14 @@ package hai913i.tp2;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Point d'entrée : charge les faits (A0) et calcule le couplage (A1).
+ * Point d'entrée : charge les faits (A0), calcule le couplage (A1) et
+ * exporte le graphe pondéré (A2).
  *
  * Codes de sortie : 0 si tout va bien, 1 si les arguments sont invalides,
  * 2 si les fichiers sont illisibles.
@@ -104,9 +106,38 @@ public final class Main {
                     p.coupling(), p.r(), p.a(), p.b());
         }
 
-
+        // Étape A2 : graphe de couplage pondéré
+        CouplingGraph graph = CouplingGraph.from(coupling);
         OUT.println();
+        OUT.println("=== A2 : graphe de couplage pondéré ===");
+        OUT.printf(Locale.ROOT, "Nœuds : %d, arêtes : %d%n",
+                graph.nodes().size(), graph.edges().size());
+        OUT.println("Les 5 couples les plus couplés :");
+        for (Coupling.Pair p : graph.top(5)) {
+            OUT.printf(Locale.ROOT, "  %.4f  %s – %s%n", p.coupling(), p.a(), p.b());
+        }
+        OUT.println("Classes isolées : " + graph.isolated());
+        try {
+            Path sorties = Path.of("sorties");
+            Files.createDirectories(sorties);
+            graph.write(sorties.resolve("graphe-couplage.txt"));
+            graph.writeDot(sorties.resolve("graphe-couplage.dot"));
+            CouplingGraph relu = CouplingGraph.read(sorties.resolve("graphe-couplage.txt"));
+            OUT.println("Export rechargé identique : "
+                    + (relu.edges().equals(graph.edges())
+                    && relu.nodes().equals(graph.nodes())));
+        } catch (IOException e) {
+            ERR.println("Écriture des sorties impossible : " + e.getMessage());
+            System.exit(2);
+        }
 
+        // TODO étape B1 : regroupement hiérarchique ascendant, lien moyen,
+        //                 égalités départagées comme le sujet l'impose.
+        // TODO étape B2 : représenter et exporter le dendrogramme.
+        // TODO étape B3 : couper l'arbre sous les trois contraintes, puis
+        //                 vérifier la contrainte M/2 et signaler sa violation.
+        OUT.println();
+        OUT.println("Étapes A0 à A2 faites ; B1 à B3 restent à écrire.");
     }
 
     /** Nombre de couples possibles de classes distinctes : M(M-1)/2. */

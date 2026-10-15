@@ -1,0 +1,37 @@
+graph couplage {
+  node [shape=box, fontsize=10];
+  "library.app.LibraryApp";
+  "library.model.Book";
+  "library.model.Category";
+  "library.model.Dvd";
+  "library.model.Item";
+  "library.model.Loanable";
+  "library.model.Member";
+  "library.service.Catalog";
+  "library.service.ConsoleNotifier";
+  "library.service.LoanException";
+  "library.service.LoanService";
+  "library.service.LoanService.Loan";
+  "library.service.Notifier";
+  "library.util.Statistics";
+  "library.util.TextUtils";
+  "library.model.Item" -- "library.service.LoanService" [label="0.1081", penwidth=3.16];
+  "library.service.LoanService" -- "library.service.LoanService.Loan" [label="0.1081", penwidth=3.16];
+  "library.app.LibraryApp" -- "library.model.Item" [label="0.0811", penwidth=2.62];
+  "library.app.LibraryApp" -- "library.service.Catalog" [label="0.0811", penwidth=2.62];
+  "library.app.LibraryApp" -- "library.service.LoanService" [label="0.0811", penwidth=2.62];
+  "library.app.LibraryApp" -- "library.service.LoanService.Loan" [label="0.0541", penwidth=2.08];
+  "library.model.Item" -- "library.model.Member" [label="0.0541", penwidth=2.08];
+  "library.model.Item" -- "library.service.Catalog" [label="0.0541", penwidth=2.08];
+  "library.model.Member" -- "library.service.LoanService" [label="0.0541", penwidth=2.08];
+  "library.service.LoanService" -- "library.service.Notifier" [label="0.0541", penwidth=2.08];
+  "library.util.Statistics" -- "library.util.TextUtils" [label="0.0541", penwidth=2.08];
+  "library.app.LibraryApp" -- "library.model.Book" [label="0.0270", penwidth=1.54];
+  "library.app.LibraryApp" -- "library.util.Statistics" [label="0.0270", penwidth=1.54];
+  "library.model.Book" -- "library.model.Item" [label="0.0270", penwidth=1.54];
+  "library.model.Category" -- "library.model.Item" [label="0.0270", penwidth=1.54];
+  "library.model.Loanable" -- "library.service.LoanService" [label="0.0270", penwidth=1.54];
+  "library.model.Member" -- "library.service.ConsoleNotifier" [label="0.0270", penwidth=1.54];
+  "library.service.Catalog" -- "library.service.LoanService" [label="0.0270", penwidth=1.54];
+  "library.service.LoanService" -- "library.util.TextUtils" [label="0.0270", penwidth=1.54];
+}
