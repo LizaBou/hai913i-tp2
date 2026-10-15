@@ -143,7 +143,24 @@ public final class Main {
                     String.join(", ", n.right().members()));
         }
 
-        // TODO étape B2 : représenter et exporter le dendrogramme.
+        // Étape B2 : représentation et export du dendrogramme
+        OUT.println();
+        OUT.println("=== B2 : dendrogramme ===");
+        OUT.println("Arbre valide : "
+                + DendrogramExport.check(dendro, coupling.getClasses().size()));
+        try {
+            Path sorties = Path.of("sorties");
+            Files.createDirectories(sorties);
+            DendrogramExport.writeTree(dendro, sorties.resolve("dendrogramme.txt"));
+            DendrogramExport.writeMerges(dendro, sorties.resolve("fusions.csv"));
+            DendrogramExport.writeJson(dendro, sorties.resolve("dendrogramme.json"));
+            DendrogramExport.writeDot(dendro, sorties.resolve("dendrogramme.dot"));
+            OUT.println("Fichiers écrits dans sorties/ : dendrogramme.txt, "
+                    + "fusions.csv, dendrogramme.json, dendrogramme.dot");
+        } catch (IOException e) {
+            ERR.println("Écriture des sorties impossible : " + e.getMessage());
+            System.exit(2);
+        }
         // TODO étape B3 : couper l'arbre sous les trois contraintes, puis
         //                 vérifier la contrainte M/2 et signaler sa violation.
         OUT.println();
