@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Point d'entrée : charge les faits (A0), calcule le couplage (A1) et
- * exporte le graphe pondéré (A2).
+ * Point d'entrée : charge les faits (A0), calcule le couplage (A1),
+ * exporte le graphe pondéré (A2) et construit le dendrogramme (B1).
  *
  * Codes de sortie : 0 si tout va bien, 1 si les arguments sont invalides,
  * 2 si les fichiers sont illisibles.
@@ -131,13 +131,23 @@ public final class Main {
             System.exit(2);
         }
 
-        // TODO étape B1 : regroupement hiérarchique ascendant, lien moyen,
-        //                 égalités départagées comme le sujet l'impose.
+        // Étape B1 : clustering hiérarchique ascendant, lien moyen
+        Dendrogram dendro = Clustering.run(coupling);
+        OUT.println();
+        OUT.println("=== B1 : clustering hiérarchique (lien moyen) ===");
+        OUT.printf(Locale.ROOT, "Fusions : %d%n", dendro.merges().size());
+        int etape = 1;
+        for (Dendrogram.Node n : dendro.merges()) {
+            OUT.printf(Locale.ROOT, "%2d  %.4f  {%s} + {%s}%n", etape++, n.similarity(),
+                    String.join(", ", n.left().members()),
+                    String.join(", ", n.right().members()));
+        }
+
         // TODO étape B2 : représenter et exporter le dendrogramme.
         // TODO étape B3 : couper l'arbre sous les trois contraintes, puis
         //                 vérifier la contrainte M/2 et signaler sa violation.
         OUT.println();
-        OUT.println("Étapes A0 à A2 faites ; B1 à B3 restent à écrire.");
+        OUT.println("Étapes A0 à B1 faites ; B2 et B3 restent à écrire.");
     }
 
     /** Nombre de couples possibles de classes distinctes : M(M-1)/2. */
