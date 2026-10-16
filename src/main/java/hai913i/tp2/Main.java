@@ -161,10 +161,24 @@ public final class Main {
             ERR.println("Écriture des sorties impossible : " + e.getMessage());
             System.exit(2);
         }
-        // TODO étape B3 : couper l'arbre sous les trois contraintes, puis
-        //                 vérifier la contrainte M/2 et signaler sa violation.
+        // Étape B3 : coupe du dendrogramme avec le seuil CP
+        ModuleCut.Result coupe = ModuleCut.cut(dendro, coupling, cp);
         OUT.println();
-        OUT.println("Étapes A0 à B1 faites ; B2 et B3 restent à écrire.");
+        OUT.println("=== B3 : modules (coupe du dendrogramme) ===");
+        for (String ligne : ModuleCut.describe(coupe)) {
+            OUT.println(ligne);
+        }
+        try {
+            Path sorties = Path.of("sorties");
+            Files.createDirectories(sorties);
+            ModuleCut.write(coupe, sorties.resolve(
+                    String.format(Locale.ROOT, "modules-cp%.4f.txt", cp)));
+        } catch (IOException e) {
+            ERR.println("Écriture des sorties impossible : " + e.getMessage());
+            System.exit(2);
+        }
+        OUT.println();
+        OUT.println("Étapes A0 à B3 faites.");
     }
 
     /** Nombre de couples possibles de classes distinctes : M(M-1)/2. */
