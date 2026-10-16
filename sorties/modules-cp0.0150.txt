@@ -1,0 +1,21 @@
+CP = 0.0150 : 4 modules (maximum autorisé M/2 = 7)
+Contrainte M/2 : respectée
+Module 1 (2 classes, couplage interne moyen : 0.0541)
+    library.util.Statistics
+    library.util.TextUtils
+Module 2 (11 classes, couplage interne moyen : 0.0162)
+    library.app.LibraryApp
+    library.model.Book
+    library.model.Category
+    library.model.Item
+    library.model.Loanable
+    library.model.Member
+    library.service.Catalog
+    library.service.ConsoleNotifier
+    library.service.LoanService
+    library.service.LoanService.Loan
+    library.service.Notifier
+Module 3 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Dvd
+Module 4 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.service.LoanException

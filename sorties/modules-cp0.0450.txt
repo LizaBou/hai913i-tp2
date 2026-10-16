@@ -1,0 +1,27 @@
+CP = 0.0450 : 10 modules (maximum autorisé M/2 = 7)
+ATTENTION : contrainte M/2 VIOLÉE (10 modules > 7) : coupe rejetée
+Module 1 (2 classes, couplage interne moyen : 0.0541)
+    library.util.Statistics
+    library.util.TextUtils
+Module 2 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Loanable
+Module 3 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Category
+Module 4 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Member
+Module 5 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.service.ConsoleNotifier
+Module 6 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.service.Notifier
+Module 7 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Book
+Module 8 (5 classes, couplage interne moyen : 0.0595)
+    library.app.LibraryApp
+    library.model.Item
+    library.service.Catalog
+    library.service.LoanService
+    library.service.LoanService.Loan
+Module 9 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.model.Dvd
+Module 10 (1 classes, couplage interne moyen : sans objet (une seule classe))
+    library.service.LoanException
