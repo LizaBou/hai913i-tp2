@@ -5,15 +5,18 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Point d'entrée : charge les faits (A0), calcule le couplage (A1),
- * exporte le graphe pondéré (A2) et construit le dendrogramme (B1).
+ * exporte le graphe pondéré (A2), construit le dendrogramme (B1, B2)
+ * et le coupe en modules (B3).
  *
  * Codes de sortie : 0 si tout va bien, 1 si les arguments sont invalides,
- * 2 si les fichiers sont illisibles.
+ * 2 si les fichiers sont absents, illisibles ou incohérents.
  */
 public final class Main {
 
@@ -43,6 +46,11 @@ public final class Main {
         double cp = CP_DEFAUT;
         String prefix = null;
         for (int i = 1; i < args.length; i++) {
+            if (("--cp".equals(args[i]) || "--prefix".equals(args[i]))
+                    && i + 1 >= args.length) {
+                usage("valeur manquante après " + args[i]);
+                return;
+            }
             if ("--cp".equals(args[i]) && i + 1 < args.length) {
                 try {
                     cp = Double.parseDouble(args[++i]);
@@ -57,8 +65,8 @@ public final class Main {
                 return;
             }
         }
-        if (cp < 0.0) {
-            usage("--cp doit être positif ou nul");
+        if (!Double.isFinite(cp) || cp < 0.0) {
+            usage("--cp doit être un nombre fini, positif ou nul");
             return;
         }
 
@@ -72,6 +80,22 @@ public final class Main {
             ERR.println("Lecture des faits impossible : " + e.getMessage());
             System.exit(2);
             return;
+        }
+
+        // Validation : au moins une classe, et arcs qui ne citent que des classes connues
+        if (facts.classes().isEmpty()) {
+            ERR.println("Jeu de faits invalide : aucune classe dans le fichier des classes");
+            System.exit(2);
+            return;
+        }
+        Set<String> connues = new HashSet<>(facts.classNames());
+        for (Facts.CallArc arc : facts.calls()) {
+            if (!connues.contains(arc.callerClass()) || !connues.contains(arc.calleeClass())) {
+                ERR.println("Jeu de faits invalide : l'arc " + arc.caller() + " -> "
+                        + arc.callee() + " cite une classe absente du fichier des classes");
+                System.exit(2);
+                return;
+            }
         }
 
         // Étape A0 : compteurs
@@ -161,6 +185,7 @@ public final class Main {
             ERR.println("Écriture des sorties impossible : " + e.getMessage());
             System.exit(2);
         }
+
         // Étape B3 : coupe du dendrogramme avec le seuil CP
         ModuleCut.Result coupe = ModuleCut.cut(dendro, coupling, cp);
         OUT.println();
